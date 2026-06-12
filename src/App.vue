@@ -28,8 +28,8 @@ import {
 const settings = reactive({
   apiKey: localStorage.getItem('deepseek_api_key') || '',
   baseURL: localStorage.getItem('deepseek_base_url') || 'https://api.deepseek.com',
-  model: localStorage.getItem('deepseek_model') || 'deepseek-v4-pro',
-  systemPrompt: localStorage.getItem('deepseek_system_prompt') || 'You are a helpful assistant.',
+  model: localStorage.getItem('deepseek_model') || 'deepseek-v4-flash',
+  systemPrompt: localStorage.getItem('deepseek_system_prompt') || '你是一个乐于助人且知识渊博的 AI 助手。',
   thinkingEnabled: localStorage.getItem('deepseek_thinking_enabled') !== 'false',
   reasoningEffort: localStorage.getItem('deepseek_reasoning_effort') || 'high',
   temperature: Number(localStorage.getItem('deepseek_temperature') || '1.0'),
@@ -481,7 +481,8 @@ onMounted(() => {
         <input 
           type="text" 
           v-model="settings.baseURL" 
-          class="w-full glass-input text-sm text-white rounded-none px-3 py-2"
+          disabled
+          class="w-full glass-input text-sm text-gray-400 rounded-none px-3 py-2 bg-white/5 cursor-not-allowed border-white/5"
         />
       </div>
 
