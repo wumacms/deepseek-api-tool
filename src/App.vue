@@ -188,8 +188,10 @@ const handleSend = async () => {
         messages.value.push({
           role: 'assistant',
           content: assistantMessage.content || '',
-          reasoning_content: assistantMessage.reasoning_content || undefined
-        });
+          reasoning_content: assistantMessage.reasoning_content || undefined,
+          model: response.model,
+          usage: response.usage
+        } as any);
       }
       if (response.usage) {
         latestUsage.value = response.usage;
@@ -413,6 +415,49 @@ const handleDownloadMessage = (text: string, index: number) => {
     console.error('Failed to download message:', err);
   }
 };
+
+// ==================== Token 计费与格式化工具 ====================
+const calculateCost = (model: string, usage: any) => {
+  if (!usage) return 0;
+  const isPro = model.includes('pro');
+  let hitRate = 0.025; // Pro 缓存命中价格：0.025元 / 百万 tokens
+  let missRate = 3.0;  // Pro 缓存未命中价格：3元 / 百万 tokens
+  let outputRate = 6.0; // Pro 输出价格：6元 / 百万 tokens
+
+  if (!isPro && (model.includes('flash') || model.includes('chat'))) {
+    hitRate = 0.02; // Flash 缓存命中价格：0.02元 / 百万 tokens
+    missRate = 1.0;  // Flash 缓存未命中价格：1元 / 百万 tokens
+    outputRate = 2.0; // Flash 输出价格：2元 / 百万 tokens
+  }
+
+  const promptTokens = usage.prompt_tokens || 0;
+  const completionTokens = usage.completion_tokens || 0;
+
+  // 获取缓存命中的 token 数
+  let hitTokens = 0;
+  if (typeof usage.prompt_cache_hit_tokens === 'number') {
+    hitTokens = usage.prompt_cache_hit_tokens;
+  } else if (usage.prompt_tokens_details && typeof usage.prompt_tokens_details.cached_tokens === 'number') {
+    hitTokens = usage.prompt_tokens_details.cached_tokens;
+  }
+
+  const missTokens = Math.max(0, promptTokens - hitTokens);
+
+  const cost = (hitTokens * hitRate + missTokens * missRate + completionTokens * outputRate) / 1000000;
+  return cost;
+};
+
+const formatCost = (cost: number) => {
+  if (cost === 0) return '0.00';
+  if (cost < 0.0001) {
+    return cost.toFixed(6);
+  }
+  if (cost < 0.01) {
+    return cost.toFixed(5);
+  }
+  return cost.toFixed(4);
+};
+
 onMounted(() => {
   if (window.innerWidth < 768 && localStorage.getItem('deepseek_sidebar_collapsed') === null) {
     isSidebarCollapsed.value = true;
@@ -704,25 +749,39 @@ onMounted(() => {
               <div class="bg-white/5 border border-white/10 px-5 py-4 rounded-none text-sm text-gray-200 leading-relaxed shadow-sm">
                 <div class="markdown-content" v-html="renderMarkdown(msg.content || '')"></div>
                 
-                <!-- 底部操作栏：复制 & 下载 -->
-                <div class="flex items-center gap-4 mt-3 pt-2.5 border-t border-white/5 text-xs text-gray-400 select-none">
-                  <button 
-                    @click="handleCopyMessage(msg.content || '', index)"
-                    class="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
-                    title="复制全文"
-                  >
-                    <Check v-if="copiedIndices[index]" class="w-3.5 h-3.5 text-green-400" />
-                    <Copy v-else class="w-3.5 h-3.5" />
-                    <span>{{ copiedIndices[index] ? '已复制' : '复制' }}</span>
-                  </button>
-                  <button 
-                    @click="handleDownloadMessage(msg.content || '', index)"
-                    class="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
-                    title="下载为 Markdown 文件"
-                  >
-                    <Download class="w-3.5 h-3.5" />
-                    <span>下载</span>
-                  </button>
+                <!-- 底部操作栏：复制 & 下载 & Token消耗/花费 -->
+                <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-white/5 text-xs text-gray-400 select-none">
+                  <div class="flex items-center gap-4">
+                    <button 
+                      @click="handleCopyMessage(msg.content || '', index)"
+                      class="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+                      title="复制全文"
+                    >
+                      <Check v-if="copiedIndices[index]" class="w-3.5 h-3.5 text-green-400" />
+                      <Copy v-else class="w-3.5 h-3.5" />
+                      <span>{{ copiedIndices[index] ? '已复制' : '复制' }}</span>
+                    </button>
+                    <button 
+                      @click="handleDownloadMessage(msg.content || '', index)"
+                      class="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+                      title="下载为 Markdown 文件"
+                    >
+                      <Download class="w-3.5 h-3.5" />
+                      <span>下载</span>
+                    </button>
+                  </div>
+                  <div v-if="(msg as any).usage" class="text-[11px] text-gray-500 font-mono flex items-center gap-2">
+                    <span 
+                      :title="`输入: ${(msg as any).usage.prompt_tokens} | 输出: ${(msg as any).usage.completion_tokens}${ (msg as any).usage.prompt_cache_hit_tokens ? ' | 缓存命中: ' + (msg as any).usage.prompt_cache_hit_tokens : '' }${ (msg as any).usage.completion_tokens_details?.reasoning_tokens ? ' | 思考: ' + (msg as any).usage.completion_tokens_details.reasoning_tokens : '' }`"
+                      class="cursor-help hover:text-gray-400 transition-colors"
+                    >
+                      Tokens: <span class="text-gray-400 font-bold">{{ (msg as any).usage.total_tokens }}</span>
+                    </span>
+                    <span class="w-1.5 h-1.5 bg-white/10 rounded-full"></span>
+                    <span>
+                      花费: <span class="text-blue-400 font-bold">¥{{ formatCost(calculateCost((msg as any).model || settings.model, (msg as any).usage)) }}</span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

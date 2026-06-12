@@ -120,6 +120,9 @@ export class DeepSeekClient {
       model: this.defaultModel,
       ...request,
       stream: true,
+      stream_options: {
+        include_usage: true
+      }
     };
 
     let response: Response;

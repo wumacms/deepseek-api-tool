@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>✅ 简洁待办</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <style>
+        /* 自定义复选框样式 - 让勾选体验更顺滑 */
+        .task-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .task-checkbox:checked {
+            background-color: #22c55e;
+            border-color: #22c55e;
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+            background-size: 0.8rem;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .task-checkbox:focus-visible {
+            outline: 2px solid #22c55e;
+            outline-offset: 2px;
+        }
+
+        /* 平滑动画 */
+        .fade-in {
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 滚动条美化 */
+        .task-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .task-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .task-list::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 8px;
+        }
+
+        .task-list::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen flex items-center justify-center p-4 sm:p-6">
+
+    <!-- ===== 主卡片 ===== -->
+    <div
+        class="w-full max-w-lg bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/60 p-6 sm:p-8 transition-all duration-300">
+
+        <!-- 标题 + 统计 -->
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                <span class="text-3xl">📋</span> 待办
+            </h1>
+            <div class="text-sm text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium tabular-nums"
+                id="stats">
+                0 / 0
+            </div>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="flex gap-2 mb-6">
+            <input type="text" id="taskInput" placeholder="写一个任务..." autocomplete="off"
+                class="flex-1 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/60 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-300 transition-all duration-200 text-sm" />
+            <button id="addBtn"
+                class="px-5 py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-medium rounded-xl shadow-md shadow-emerald-200/50 transition-all duration-150 flex items-center gap-1 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                添加
+            </button>
+        </div>
+
+        <!-- 任务列表 -->
+        <ul id="taskList" class="task-list space-y-2 max-h-[360px] overflow-y-auto pr-1">
+            <!-- 动态渲染 -->
+            <li class="text-center text-slate-400 py-8 text-sm" id="emptyHint">
+                ✨ 还没有任务，添加一条吧
+            </li>
+        </ul>
+
+        <!-- 底部操作栏 -->
+        <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+            <span id="remainingCount" class="font-medium">0 项未完成</span>
+            <button id="clearCompletedBtn"
+                class="px-3 py-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 text-slate-400 transition-colors duration-150 font-medium">
+                清除已完成
+            </button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // --- DOM 引用 ---
+            const taskInput = document.getElementById('taskInput');
+            const addBtn = document.getElementById('addBtn');
+            const taskList = document.getElementById('taskList');
+            const emptyHint = document.getElementById('emptyHint');
+            const stats = document.getElementById('stats');
+            const remainingCount = document.getElementById('remainingCount');
+            const clearCompletedBtn = document.getElementById('clearCompletedBtn');
+
+            // --- 状态 ---
+            let tasks = [];
+
+            // --- 本地存储键 ---
+            const STORAGE_KEY = 'simple_todo_tailwind';
+
+            // --- 加载数据 ---
+            function loadTasks() {
+                try {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (stored) {
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed)) {
+                            tasks = parsed;
+                            // 兼容旧数据：确保每个任务有 id 和 createdAt
+                            tasks = tasks.map(t => ({
+                                ...t,
+                                id: t.id || 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                                createdAt: t.createdAt || Date.now(),
+                            }));
+                        }
+                    }
+                } catch (e) {
+                    console.warn('加载本地数据失败，使用默认空列表', e);
+                    tasks = [];
+                }
+                // 按创建时间排序（旧的在前）
+                tasks.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+            }
+
+            // --- 保存数据 ---
+            function saveTasks() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+                } catch (e) {
+                    console.warn('保存本地数据失败', e);
+                }
+            }
+
+            // --- 渲染列表 ---
+            function render() {
+                const completed = tasks.filter(t => t.done).length;
+                const total = tasks.length;
+                const remaining = total - completed;
+
+                // 统计信息
+                stats.textContent = `${completed} / ${total}`;
+                remainingCount.textContent = `${remaining} 项未完成`;
+
+                // 清空列表（保留空提示占位）
+                while (taskList.firstChild) {
+                    taskList.removeChild(taskList.firstChild);
+                }
+
+                if (total === 0) {
+                    // 显示空提示
+                    const emptyLi = document.createElement('li');
+                    emptyLi.id = 'emptyHint';
+                    emptyLi.className = 'text-center text-slate-400 py-8 text-sm';
+                    emptyLi.textContent = '✨ 还没有任务，添加一条吧';
+                    taskList.appendChild(emptyLi);
+                    return;
+                }
+
+                // 渲染每个任务
+                tasks.forEach((task, index) => {
+                    const li = document.createElement('li');
+                    li.className =
+                        'flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-150 group fade-in';
+                    li.dataset.index = index;
+
+                    // 复选框
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'task-checkbox';
+                    checkbox.checked = task.done;
+                    checkbox.addEventListener('change', function (e) {
+                        e.stopPropagation();
+                        toggleTask(task.id);
+                    });
+
+                    // 任务文本
+                    const span = document.createElement('span');
+                    span.className =
+                        `flex-1 text-sm font-medium transition-all duration-150 ${task.done ? 'text-slate-300 line-through' : 'text-slate-700'}`;
+                    span.textContent = task.text || '（空任务）';
+
+                    // 删除按钮
+                    const delBtn = document.createElement('button');
+                    delBtn.className =
+                        'opacity-0 group-hover:opacity-100 transition-opacity duration-150 p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-500 focus:outline-none focus:opacity-100';
+                    delBtn.setAttribute('aria-label', '删除任务');
+                    delBtn.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 6l-1.5 14.25A2.25 2.25 0 0115.75 22.5h-7.5a2.25 2.25 0 01-2.25-2.25L4.5 6m4.5 0V3.75A1.5 1.5 0 0110.5 2.25h3a1.5 1.5 0 011.5 1.5V6m-6 0h6" />
+                        </svg>
+                    `;
+                    delBtn.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        deleteTask(task.id);
+                    });
+
+                    li.appendChild(checkbox);
+                    li.appendChild(span);
+                    li.appendChild(delBtn);
+                    taskList.appendChild(li);
+                });
+            }
+
+            // --- 核心操作 ---
+
+            // 添加任务
+            function addTask() {
+                const text = taskInput.value.trim();
+                if (!text) {
+                    taskInput.classList.add('border-rose-300', 'ring-2', 'ring-rose-200');
+                    setTimeout(() => {
+                        taskInput.classList.remove('border-rose-300', 'ring-2', 'ring-rose-200');
+                    }, 600);
+                    taskInput.focus();
+                    return;
+                }
+
+                const newTask = {
+                    id: 'task_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+                    text: text,
+                    done: false,
+                    createdAt: Date.now(),
+                };
+                tasks.push(newTask);
+                saveTasks();
+                render();
+                taskInput.value = '';
+                taskInput.focus();
+
+                // 滚动到底部（新任务）
+                setTimeout(() => {
+                    taskList.scrollTop = taskList.scrollHeight;
+                }, 50);
+            }
+
+            // 切换完成状态
+            function toggleTask(id) {
+                const task = tasks.find(t => t.id === id);
+                if (task) {
+                    task.done = !task.done;
+                    saveTasks();
+                    render();
+                }
+            }
+
+            // 删除任务
+            function deleteTask(id) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveTasks();
+                render();
+            }
+
+            // 清除已完成
+            function clearCompleted() {
+                const hadCompleted = tasks.some(t => t.done);
+                if (!hadCompleted) return;
+                tasks = tasks.filter(t => !t.done);
+                saveTasks();
+                render();
+            }
+
+            // --- 键盘事件 ---
+            function onInputKeydown(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTask();
+                }
+            }
+
+            // --- 初始化 ---
+            function init() {
+                loadTasks();
+                render();
+
+                // 绑定事件
+                addBtn.addEventListener('click', addTask);
+                taskInput.addEventListener('keydown', onInputKeydown);
+                clearCompletedBtn.addEventListener('click', clearCompleted);
+
+                // 点击空白区域聚焦输入框（方便快速输入）
+                document.addEventListener('keydown', function (e) {
+                    // 如果按的是字母/数字/符号，且当前焦点不在输入框内，自动聚焦
+                    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                        const active = document.activeElement;
+                        if (active !== taskInput && !taskList.contains(active)) {
+                            taskInput.focus();
+                        }
+                    }
+                });
+            }
+
+            // 页面完全加载后启动
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+        })();
+    </script>
+
+</body>
+
+</html>

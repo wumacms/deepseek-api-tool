@@ -47,6 +47,7 @@ export function useDeepSeek(client: MaybeRefOrGetter<DeepSeekClient>): UseDeepSe
 
     if (isStream) {
       try {
+        let finalResponse: ChatCompletionResponse | undefined;
         await clientInstance.chatStream(
           {
             messages,
@@ -59,9 +60,10 @@ export function useDeepSeek(client: MaybeRefOrGetter<DeepSeekClient>): UseDeepSe
             onContentChunk: (chunk) => {
               contentText.value += chunk;
             },
-            onDone: () => {
+            onDone: (response) => {
               loading.value = false;
               abortController = null;
+              finalResponse = response;
             },
             onError: (err) => {
               if (err.name === 'AbortError') {
@@ -76,6 +78,7 @@ export function useDeepSeek(client: MaybeRefOrGetter<DeepSeekClient>): UseDeepSe
             signal: abortController.signal,
           }
         );
+        return finalResponse;
       } catch (err: any) {
         if (err.name !== 'AbortError') {
           error.value = err;
