@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光影映画 · 摄影工作室</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 免费的图标库: Font Awesome 6 (免费) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 额外的微调样式 -->
+    <style>
+        /* 平滑滚动 & 占位背景效果 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url('https://images.unsplash.com/photo-1554048612-b6a482bc67e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center 30%;
+        }
+
+        .gallery-img {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-hover {
+            transition: all 0.2s ease;
+        }
+
+        .card-hover:hover {
+            background-color: #fafafa;
+            transform: translateY(-2px);
+        }
+
+        .bg-soft-gray {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body class="font-sans text-gray-800 antialiased">
+
+    <!-- ======= 导航栏 ======= -->
+    <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex items-center justify-between h-16 lg:h-20">
+            <!-- Logo + 品牌 -->
+            <a href="#" class="flex items-center gap-2 text-2xl font-bold tracking-tight text-gray-900">
+                <i class="fas fa-camera-retro text-indigo-600 text-2xl"></i>
+                <span>光影映画</span>
+            </a>
+            <!-- 导航链接 (桌面) -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+                <a href="#works" class="hover:text-indigo-600 transition">作品集</a>
+                <a href="#services" class="hover:text-indigo-600 transition">服务</a>
+                <a href="#about" class="hover:text-indigo-600 transition">关于</a>
+                <a href="#contact" class="hover:text-indigo-600 transition">联系</a>
+            </nav>
+            <!-- 预约按钮 (桌面) -->
+            <div class="hidden md:block">
+                <a href="#contact"
+                    class="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-indigo-700 transition shadow-md">
+                    <i class="fas fa-calendar-check"></i> 预约拍摄
+                </a>
+            </div>
+            <!-- 移动端菜单图标 (简单交互: 点击跳转锚点, 仅作示意) -->
+            <div class="md:hidden flex items-center gap-3">
+                <a href="#contact" class="text-indigo-600 bg-indigo-50 p-2 rounded-full text-sm"><i
+                        class="fas fa-calendar-check"></i></a>
+                <button id="mobileMenuBtn" class="text-gray-700 p-2 focus:outline-none" aria-label="菜单">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- 简易移动菜单下拉 (为了完整性, 纯展示) -->
+        <div id="mobileMenu"
+            class="hidden md:hidden bg-white border-t border-gray-100 px-5 pb-4 pt-2 space-y-2 text-sm font-medium text-gray-600">
+            <a href="#works" class="block py-1 hover:text-indigo-600"><i class="fas fa-images w-6"></i>作品集</a>
+            <a href="#services" class="block py-1 hover:text-indigo-600"><i class="fas fa-concierge-bell w-6"></i>服务</a>
+            <a href="#about" class="block py-1 hover:text-indigo-600"><i class="fas fa-info-circle w-6"></i>关于</a>
+            <a href="#contact" class="block py-1 hover:text-indigo-600"><i class="fas fa-envelope w-6"></i>联系</a>
+        </div>
+    </header>
+
+    <!-- ======= Hero 主视觉 ======= -->
+    <section class="hero-bg relative min-h-[85vh] flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="relative z-10 max-w-4xl mx-auto text-center px-6 py-20 text-white">
+            <div
+                class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-light tracking-wide mb-6 border border-white/10">
+                <i class="fas fa-star text-amber-300"></i> 专业摄影 · 光与美的捕捉者
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold leading-tight drop-shadow-xl mb-6">每一帧，都是<BR><span
+                    class="text-amber-200">故事</span></h1>
+            <p class="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-gray-100 font-light drop-shadow">
+                人像 · 风光 · 商业 · 婚纱 · 创意摄影
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#works"
+                    class="bg-white text-gray-900 font-semibold px-8 py-4 rounded-full shadow-xl hover:bg-gray-100 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-images"></i> 浏览作品
+                </a>
+                <a href="#contact"
+                    class="bg-indigo-600 text-white font-semibold px-8 py-4 rounded-full shadow-xl hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-camera"></i> 立即预约
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======= 作品集/画廊 (使用Unsplash) ======= -->
+    <section id="works" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8">
+            <div class="text-center mb-14">
+                <span class="text-indigo-600 font-semibold text-sm tracking-widest uppercase"><i
+                        class="fas fa-camera mr-2"></i>精选作品</span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-4">镜头下的世界</h2>
+                <p class="text-gray-500 max-w-xl mx-auto">每一次快门，都是独一无二的视角。</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <!-- 图片1 -->
+                <div class="group overflow-hidden rounded-2xl shadow-md bg-gray-50">
+                    <img class="gallery-img w-full h-72 object-cover"
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        alt="人像摄影">
+                    <div class="p-4 flex items-center justify-between">
+                        <span class="font-semibold text-sm"><i class="far fa-user text-indigo-500 mr-1"></i> 人像</span>
+                        <span class="text-xs text-gray-400"><i class="far fa-heart"></i> 212</span>
+                    </div>
+                </div>
+                <!-- 图片2 -->
+                <div class="group overflow-hidden rounded-2xl shadow-md bg-gray-50">
+                    <img class="gallery-img w-full h-72 object-cover"
+                        src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        alt="宴会摄影">
+                    <div class="p-4 flex items-center justify-between">
+                        <span class="font-semibold text-sm"><i class="fas fa-glass-cheers text-indigo-500 mr-1"></i>
+                            婚礼</span>
+                        <span class="text-xs text-gray-400"><i class="far fa-heart"></i> 189</span>
+                    </div>
+                </div>
+                <!-- 图片3 -->
+                <div class="group overflow-hidden rounded-2xl shadow-md bg-gray-50">
+                    <img class="gallery-img w-full h-72 object-cover"
+                        src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        alt="城市建筑">
+                    <div class="p-4 flex items-center justify-between">
+                        <span class="font-semibold text-sm"><i class="fas fa-city text-indigo-500 mr-1"></i> 城市</span>
+                        <span class="text-xs text-gray-400"><i class="far fa-heart"></i> 256</span>
+                    </div>
+                </div>
+                <!-- 图片4 -->
+                <div class="group overflow-hidden rounded-2xl shadow-md bg-gray-50">
+                    <img class="gallery-img w-full h-72 object-cover"
+                        src="https://images.unsplash.com/photo-1470071459604-7b8ec44ffd0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        alt="自然风光">
+                    <div class="p-4 flex items-center justify-between">
+                        <span class="font-semibold text-sm"><i class="fas fa-leaf text-indigo-500 mr-1"></i> 自然</span>
+                        <span class="text-xs text-gray-400"><i class="far fa-heart"></i> 324</span>
+                    </div>
+                </div>
+                <!-- 图片5 -->
+                <div class="group overflow-hidden rounded-2xl shadow-md bg-gray-50">
+                    <img class="gallery-img w-full h-72 object-cover"
+                        src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        alt="时尚人像">
+                    <div class="p-4 flex items-center justify-between">
+                        <span class="font-semibold text-sm"><i class="fas fa-paint-brush text-indigo-500 mr-1"></i>
+                            创意</span>
+                        <span class="text-xs text-gray-400"><i class="far fa-heart"></i> 198</span>
+                    </div>
+                </div>
+                <!-- 图片6 -->
+                <div class="group overflow-hidden rounded-2xl shadow-md bg-gray-50">
+                    <img class="gallery-img w-full h-72 object-cover"
+                        src="https://images.unsplash.com/photo-1502982720700-7b7e3b6c0b1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        alt="生活纪实">
+                    <div class="p-4 flex items-center justify-between">
+                        <span class="font-semibold text-sm"><i class="fas fa-heart text-indigo-500 mr-1"></i> 纪实</span>
+                        <span class="text-xs text-gray-400"><i class="far fa-heart"></i> 267</span>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-12">
+                <a href="#"
+                    class="inline-flex items-center gap-2 text-indigo-600 font-medium border border-indigo-200 bg-indigo-50 px-6 py-3 rounded-full hover:bg-indigo-100 transition"><i
+                        class="fas fa-th-large"></i> 查看全部作品</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======= 服务 ======= -->
+    <section id="services" class="py-20 bg-soft-gray">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8">
+            <div class="text-center mb-14">
+                <span class="text-indigo-600 font-semibold text-sm tracking-widest uppercase"><i
+                        class="fas fa-star mr-2"></i>专业服务</span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-4">用光影定制你的故事</h2>
+                <p class="text-gray-500 max-w-xl mx-auto">从概念到成片，全程一对一专业服务。</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="card-hover bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
+                    <div
+                        class="w-16 h-16 mx-auto bg-indigo-50 rounded-full flex items-center justify-center text-3xl text-indigo-600 mb-5">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">人像摄影</h3>
+                    <p class="text-gray-500 text-sm">个人写真、情侣照、亲子照，捕捉真实情感。</p>
+                </div>
+                <div class="card-hover bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
+                    <div
+                        class="w-16 h-16 mx-auto bg-indigo-50 rounded-full flex items-center justify-center text-3xl text-indigo-600 mb-5">
+                        <i class="fas fa-ring"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">婚礼跟拍</h3>
+                    <p class="text-gray-500 text-sm">全天候纪实跟拍，留住最动人的瞬间。</p>
+                </div>
+                <div class="card-hover bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
+                    <div
+                        class="w-16 h-16 mx-auto bg-indigo-50 rounded-full flex items-center justify-center text-3xl text-indigo-600 mb-5">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">商业广告</h3>
+                    <p class="text-gray-500 text-sm">产品、空间、品牌视觉，助力传播。</p>
+                </div>
+                <div class="card-hover bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
+                    <div
+                        class="w-16 h-16 mx-auto bg-indigo-50 rounded-full flex items-center justify-center text-3xl text-indigo-600 mb-5">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">旅行跟拍</h3>
+                    <p class="text-gray-500 text-sm">定制旅拍路线，让风景与你融为一体。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======= 关于 / 团队 ======= -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8 grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+                <span class="text-indigo-600 font-semibold text-sm tracking-widest uppercase"><i
+                        class="fas fa-info-circle mr-2"></i>关于我们</span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-6">用热爱 定格永恒</h2>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    光影映画工作室成立于2018年，由一群热爱视觉艺术的年轻人组成。我们相信，每一张照片背后都是一个值得珍藏的故事。无论是自然光的人像，还是精心布光的商业片，我们追求极致的品质和情感表达。</p>
+                <div class="flex flex-wrap gap-4 mb-8">
+                    <div class="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full"><i
+                            class="fas fa-check-circle text-indigo-600"></i> <span class="text-sm">8年+ 行业经验</span></div>
+                    <div class="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full"><i
+                            class="fas fa-check-circle text-indigo-600"></i> <span class="text-sm">2000+ 客户信任</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full"><i
+                            class="fas fa-check-circle text-indigo-600"></i> <span class="text-sm">专业级后期</span></div>
+                </div>
+                <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="摄影团队" class="rounded-2xl shadow-lg w-full object-cover h-48 sm:h-56 lg:hidden mt-6">
+            </div>
+            <div class="hidden lg:block">
+                <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="摄影团队" class="rounded-2xl shadow-xl w-full object-cover h-96">
+            </div>
+        </div>
+    </section>
+
+    <!-- ======= 联系/预约 (含免费图标) ======= -->
+    <section id="contact" class="py-20 bg-soft-gray">
+        <div class="max-w-4xl mx-auto px-5 sm:px-8 text-center">
+            <span class="text-indigo-600 font-semibold text-sm tracking-widest uppercase"><i
+                    class="fas fa-envelope mr-2"></i>联系我们</span>
+            <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-6">留下你的故事</h2>
+            <p class="text-gray-500 mb-12 max-w-lg mx-auto">预约拍摄或合作咨询，我们将在24小时内回复。</p>
+
+            <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12">
+                <form class="grid md:grid-cols-2 gap-6 text-left">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"><i
+                                class="far fa-user mr-1 text-indigo-500"></i>姓名</label>
+                        <input type="text" placeholder="你的名字"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"><i
+                                class="far fa-envelope mr-1 text-indigo-500"></i>邮箱</label>
+                        <input type="email" placeholder="your@email.com"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1"><i
+                                class="far fa-comment-dots mr-1 text-indigo-500"></i>留言</label>
+                        <textarea rows="4" placeholder="拍摄意向、时间、风格 ..."
+                            class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 focus:outline-none"></textarea>
+                    </div>
+                    <div class="md:col-span-2 flex justify-center">
+                        <button type="submit"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-10 py-4 rounded-full shadow-lg transition flex items-center gap-3"><i
+                                class="fas fa-paper-plane"></i> 发送预约</button>
+                    </div>
+                </form>
+                <div
+                    class="border-t border-gray-100 mt-8 pt-8 flex flex-wrap justify-center gap-8 text-sm text-gray-500">
+                    <span><i class="fas fa-phone-alt text-indigo-500 mr-2"></i>+86 400-888-6666</span>
+                    <span><i class="fas fa-map-marker-alt text-indigo-500 mr-2"></i>杭州市西湖区创意路88号</span>
+                    <span><i class="far fa-clock text-indigo-500 mr-2"></i>09:00 - 21:00</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======= 底部 ======= -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3 text-white text-xl font-bold">
+                <i class="fas fa-camera-retro text-indigo-400"></i> 光影映画
+            </div>
+            <div class="flex gap-6 text-sm">
+                <a href="#" class="hover:text-white transition"><i class="fab fa-weixin text-lg"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-weibo text-lg"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-instagram text-lg"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-xiaomi text-lg"></i></a>
+            </div>
+            <div class="text-sm text-gray-500">
+                &copy; 2025 光影映画摄影 · 用心捕捉
+            </div>
+        </div>
+    </footer>
+
+    <!-- 简单的移动菜单切换脚本 -->
+    <script>
+        (function () {
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', function () {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        })();
+    </script>
+
+</body>
+
+</html>
