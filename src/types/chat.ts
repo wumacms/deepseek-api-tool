@@ -20,6 +20,31 @@ export interface DisplayMessage {
 }
 
 /**
+ * 会话完整数据，包含消息体
+ */
+export interface ChatSession {
+  id: string;
+  title: string;
+  messages: DisplayMessage[];
+  createdAt: number;
+  updatedAt: number;
+  model: string;
+  messageCount: number;
+}
+
+/**
+ * 会话索引元数据（不含消息体，用于列表渲染）
+ */
+export interface SessionMeta {
+  id: string;
+  title: string;
+  createdAt: number;
+  updatedAt: number;
+  model: string;
+  messageCount: number;
+}
+
+/**
  * 将 DisplayMessage 转换为 API 请求可用的 ChatCompletionMessageParam。
  * 剥离 UI 专属字段 (model, usage, interrupted)。
  */
@@ -40,3 +65,11 @@ export function toAPIMessage(msg: DisplayMessage): ChatCompletionMessageParam {
     reasoning_content: msg.reasoning_content || undefined,
   };
 }
+
+/**
+ * 生成 UUID v4
+ */
+export function generateId(): string {
+  return crypto.randomUUID();
+}
+

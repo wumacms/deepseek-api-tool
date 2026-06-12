@@ -4,6 +4,7 @@ import { MessageSquare } from '@lucide/vue';
 
 // Composables
 import { useSettings } from './composables/useSettings';
+import { useSessions } from './composables/useSessions';
 import { useChat } from './composables/useChat';
 
 // Components
@@ -16,6 +17,19 @@ import StreamingMessage from './components/StreamingMessage.vue';
 // ==================== 设置 ====================
 const { settings, isKeyVisible } = useSettings();
 
+// ==================== 会话管理 ====================
+const {
+  activeSessionId,
+  activeSession,
+  searchQuery,
+  filteredSessions,
+  createSession,
+  deleteSession,
+  saveCurrentSession,
+  renameSession,
+  loadSessionMessages,
+} = useSessions();
+
 // ==================== 侧边栏折叠 ====================
 const isSidebarCollapsed = ref(localStorage.getItem('deepseek_sidebar_collapsed') === 'true');
 
@@ -24,7 +38,10 @@ watch(isSidebarCollapsed, (newVal) => {
 });
 
 // ==================== 对话状态 ====================
-const chat = useChat(settings);
+const chat = useChat(settings, (msgs) => {
+  saveCurrentSession(msgs, settings.model);
+});
+
 const {
   messages,
   latestUsage,
@@ -41,6 +58,12 @@ const {
   handleGlobalClick,
   scrollToBottom,
 } = chat;
+
+// 监听当前活跃会话 ID 变化，同步加载对应的会话消息
+watch(activeSessionId, (newId) => {
+  const msgs = loadSessionMessages(newId);
+  chat.loadSession(msgs);
+}, { immediate: true });
 
 // ==================== 快捷提问 ====================
 const setQuickInput = (text: string) => {
@@ -76,7 +99,14 @@ onMounted(() => {
       :is-key-visible="isKeyVisible"
       :is-sidebar-collapsed="isSidebarCollapsed"
       :latest-usage="latestUsage"
+      :sessions="filteredSessions"
+      :active-session-id="activeSessionId"
+      :search-query="searchQuery"
       @update:is-key-visible="isKeyVisible = $event"
+      @update:search-query="searchQuery = $event"
+      @create-session="createSession(settings.model)"
+      @switch-session="activeSessionId = $event"
+      @delete-session="deleteSession($event)"
     />
 
     <!-- 右侧对话主界面 -->
@@ -87,8 +117,12 @@ onMounted(() => {
         :api-key="settings.apiKey"
         :model="settings.model"
         :is-sidebar-collapsed="isSidebarCollapsed"
+        :active-session-id="activeSessionId"
+        :active-session-title="activeSession.title"
         @toggle-sidebar="isSidebarCollapsed = !isSidebarCollapsed"
-        @clear-history="clearHistory"
+        @create-session="createSession(settings.model)"
+        @clear-current-chat="clearHistory"
+        @rename-session="renameSession"
       />
 
       <!-- 全局异常报错提示 -->

@@ -14,14 +14,18 @@ const MAX_CONTEXT_CHARS = 300_000; // ~100K tokens
 
 /**
  * 对话状态管理 Composable。
- * - 消息持久化（仅在关键节点写入 localStorage，非 deep watch）
+ * - 支持多会话：通过 loadSession / resetChat 切换
+ * - 消息持久化由 useSessions 控制，useChat 在关键节点触发回调
  * - 流式状态管理
  * - 上下文窗口裁剪
  * - rAF 节流滚动
  */
-export function useChat(settings: AppSettings) {
+export function useChat(
+  settings: AppSettings,
+  onSaveSession?: (messages: DisplayMessage[]) => void,
+) {
   // ==================== 状态 ====================
-  const messages = ref<DisplayMessage[]>(loadMessages());
+  const messages = ref<DisplayMessage[]>([]);
   const latestUsage = ref<ChatCompletionUsage | null>(null);
   const globalError = ref<string | null>(null);
   const chatContainerRef = ref<HTMLDivElement | null>(null);
@@ -63,22 +67,43 @@ export function useChat(settings: AppSettings) {
     }
   });
 
-  // ==================== 消息持久化 ====================
-  function loadMessages(): DisplayMessage[] {
-    try {
-      const saved = localStorage.getItem('deepseek_chat_messages');
-      return saved ? JSON.parse(saved) : [];
-    } catch (err) {
-      console.error('Failed to load chat messages from localStorage:', err);
-      return [];
+  // ==================== 会话管理 ====================
+  /**
+   * 加载指定会话的消息（由 useSessions 调用）
+   */
+  function loadSession(sessionMessages: DisplayMessage[]) {
+    // 如果正在流式生成，先中止
+    if (loading.value) {
+      deepseek.abort();
     }
+    messages.value = sessionMessages;
+    latestUsage.value = null;
+    globalError.value = null;
+    streamingThinking.value = '';
+    streamingContent.value = '';
+    copiedIndices.value = {};
+    scrollToBottom();
   }
 
-  function saveMessages() {
-    try {
-      localStorage.setItem('deepseek_chat_messages', JSON.stringify(messages.value));
-    } catch (err) {
-      console.error('Failed to save chat messages to localStorage:', err);
+  /**
+   * 重置为空白会话
+   */
+  function resetChat() {
+    if (loading.value) {
+      deepseek.abort();
+    }
+    messages.value = [];
+    latestUsage.value = null;
+    globalError.value = null;
+    streamingThinking.value = '';
+    streamingContent.value = '';
+    copiedIndices.value = {};
+  }
+
+  // ==================== 触发保存 ====================
+  function triggerSave() {
+    if (onSaveSession) {
+      onSaveSession(messages.value);
     }
   }
 
@@ -201,7 +226,7 @@ export function useChat(settings: AppSettings) {
     } finally {
       streamingThinking.value = '';
       streamingContent.value = '';
-      saveMessages();
+      triggerSave();
       scrollToBottom();
     }
   }
@@ -218,14 +243,14 @@ export function useChat(settings: AppSettings) {
     }
     streamingThinking.value = '';
     streamingContent.value = '';
-    saveMessages();
+    triggerSave();
   }
 
   function clearHistory() {
     messages.value = [];
     latestUsage.value = null;
     globalError.value = null;
-    saveMessages();
+    triggerSave();
   }
 
   // ==================== 复制 & 下载 ====================
@@ -303,6 +328,7 @@ export function useChat(settings: AppSettings) {
     handleDownloadMessage,
     handleGlobalClick,
     scrollToBottom,
-    saveMessages,
+    loadSession,
+    resetChat,
   };
 }
