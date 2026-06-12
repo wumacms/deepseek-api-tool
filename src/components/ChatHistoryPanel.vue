@@ -108,7 +108,7 @@ function handleDelete(e: Event, id: string) {
           </div>
 
           <!-- 会话条目 -->
-          <button
+          <div
             v-for="session in group.items"
             :key="session.id"
             @click="emit('switch-session', session.id)"
@@ -136,9 +136,9 @@ function handleDelete(e: Event, id: string) {
               class="opacity-0 group-hover:opacity-100 p-1 text-gray-500 hover:text-red-400 transition-all shrink-0 cursor-pointer"
               title="删除此会话"
             >
-              <Trash2 class="w-3 h-3" />
+              <Trash2 class="w-3.5 h-3.5" />
             </button>
-          </button>
+          </div>
         </div>
       </template>
     </div>
