@@ -51,7 +51,11 @@ function loadThemeCSS(themeId: string): void {
     linkEl.rel = 'stylesheet';
     document.head.appendChild(linkEl);
   }
-  linkEl.href = theme.cssPath;
+  
+  // 适配 GitHub Pages / subpath 等不同的基础部署路径
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  const cleanCssPath = theme.cssPath.startsWith('/') ? theme.cssPath.substring(1) : theme.cssPath;
+  linkEl.href = baseUrl + cleanCssPath;
 }
 
 /**
