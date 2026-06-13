@@ -50,14 +50,14 @@ const handleKeydown = (e: KeyboardEvent) => {
 </script>
 
 <template>
-  <div class="p-3 sm:p-6 border-t border-white/10 shrink-0 z-10 bg-[#080b11]/85 backdrop-blur-md">
+  <div class="p-3 sm:p-6 border-t border-border/40 shrink-0 z-10 bg-[var(--header-bg)] backdrop-blur-md">
     <div class="flex gap-2 sm:gap-3 items-end">
       <div class="flex-1 relative">
         <textarea
           ref="textareaRef"
           v-model="inputMessage"
           rows="1"
-          class="block w-full glass-input text-sm text-white rounded-none px-3 sm:px-4 py-2.5 sm:py-3 pr-10 resize-none"
+          class="block w-full glass-input text-sm text-foreground rounded-none px-3 sm:px-4 py-2.5 sm:py-3 pr-10 resize-none"
           placeholder="向 DeepSeek 发起提问... (Enter 发送, Shift+Enter 换行)"
           :disabled="loading"
           @keydown="handleKeydown"
@@ -71,9 +71,9 @@ const handleKeydown = (e: KeyboardEvent) => {
         v-if="loading"
         type="button"
         @click="emit('stop')"
-        class="h-[42px] sm:h-[46px] px-4 sm:px-6 bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 hover:border-red-500/50 font-bold rounded-none transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+        class="h-[42px] sm:h-[46px] px-4 sm:px-6 bg-destructive/20 hover:bg-destructive/30 text-destructive border border-destructive/30 hover:border-destructive/50 font-bold rounded-none transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
       >
-        <span class="w-2.5 h-2.5 bg-red-500 rounded-none animate-pulse"></span>
+        <span class="w-2.5 h-2.5 bg-destructive rounded-none animate-pulse"></span>
         <span class="hidden sm:inline">停止生成</span>
       </button>
 
@@ -83,7 +83,7 @@ const handleKeydown = (e: KeyboardEvent) => {
         type="button"
         @click="handleSend"
         :disabled="!inputMessage.trim()"
-        class="h-[42px] sm:h-[46px] px-4 sm:px-6 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-400 text-white font-bold rounded-none shadow-lg shadow-blue-500/15 disabled:shadow-none transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+        class="h-[42px] sm:h-[46px] px-4 sm:px-6 bg-primary hover:bg-primary/85 disabled:bg-muted disabled:text-muted-foreground text-primary-foreground font-bold rounded-none shadow-lg shadow-primary/15 disabled:shadow-none transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
       >
         <Send class="w-4 h-4" />
         <span class="hidden sm:inline">发送请求</span>

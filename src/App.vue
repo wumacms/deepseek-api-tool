@@ -6,6 +6,7 @@ import { MessageSquare } from '@lucide/vue';
 import { useSettings } from './composables/useSettings';
 import { useSessions } from './composables/useSessions';
 import { useChat } from './composables/useChat';
+import { useTheme } from './composables/useTheme';
 
 // Components
 import ChatSidebar from './components/ChatSidebar.vue';
@@ -13,6 +14,9 @@ import ChatHeader from './components/ChatHeader.vue';
 import ChatMessage from './components/ChatMessage.vue';
 import ChatInput from './components/ChatInput.vue';
 import StreamingMessage from './components/StreamingMessage.vue';
+
+// ==================== 主题 ====================
+useTheme();
 
 // ==================== 设置 ====================
 const { settings, isKeyVisible } = useSettings();
@@ -90,7 +94,7 @@ onMounted(() => {
     <div
       v-if="!isSidebarCollapsed"
       @click="isSidebarCollapsed = true"
-      class="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-20 transition-opacity duration-300"
+      class="md:hidden fixed inset-0 bg-background/50 backdrop-blur-sm z-20 transition-opacity duration-300"
     ></div>
 
     <!-- 左侧配置面板 -->
@@ -128,10 +132,10 @@ onMounted(() => {
       <!-- 全局异常报错提示 -->
       <div
         v-if="globalError"
-        class="mx-4 sm:mx-6 mt-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-none flex justify-between items-center shrink-0"
+        class="mx-4 sm:mx-6 mt-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-xs rounded-none flex justify-between items-center shrink-0"
       >
         <span>{{ globalError }}</span>
-        <button @click="globalError = null" class="text-red-400 hover:text-white">✕</button>
+        <button @click="globalError = null" class="text-destructive hover:text-foreground">✕</button>
       </div>
 
       <!-- 对话列表展示区域 -->
@@ -143,29 +147,33 @@ onMounted(() => {
         <!-- 欢迎引导 -->
         <div
           v-if="messages.length === 0 && !streamingThinking && !streamingContent"
-          class="flex-1 flex flex-col items-center justify-center text-center max-w-md mx-auto"
+          class="flex-1 flex flex-col items-center justify-center text-center max-w-md mx-auto py-8"
         >
-          <div class="w-16 h-16 rounded-none bg-blue-500/10 flex items-center justify-center border border-blue-500/20 mb-4 animate-pulse">
-            <MessageSquare class="w-8 h-8 text-blue-400" />
+          <!-- Glowing Icon Container -->
+          <div class="w-16 h-16 rounded-none bg-[var(--glass-bg)] flex items-center justify-center border border-[var(--primary)]/30 mb-5 relative group">
+            <div class="absolute inset-0 bg-[var(--primary)]/10 blur-md group-hover:bg-[var(--primary)]/20 transition-all duration-300"></div>
+            <MessageSquare class="w-8 h-8 text-[var(--primary)] relative z-10" />
           </div>
-          <h3 class="text-lg font-bold text-white mb-1">DeepSeek 官方模型测试沙箱</h3>
-          <p class="text-xs text-gray-400 leading-relaxed mb-6">
-            本沙箱直连官方 API。默认主打 <code class="px-1 py-0.5 rounded-none bg-white/5 border border-white/10 text-blue-400">deepseek-v4-pro</code> 模型。支持对思维链与正文流式输出的分别解析，以及多轮对话中的上下文拼装。
+          
+          <h3 class="text-lg font-bold text-foreground mb-1.5">DeepSeek 官方模型测试沙箱</h3>
+          <p class="text-xs text-muted-foreground leading-relaxed mb-6">
+            本沙箱直连官方 API。默认主打 <code class="px-1.5 py-0.5 rounded-none bg-[var(--glass-input-bg)] border border-[var(--glass-input-border)] text-[var(--code-inline)] text-[11px] font-mono">deepseek-v4-pro</code> 模型。支持对思维链与正文流式输出的分别解析，以及多轮对话中的上下文拼装。
           </p>
+          
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             <button
               @click="setQuickInput('9.11和9.8哪个大？')"
-              class="text-left text-xs bg-white/5 border border-white/5 hover:border-white/15 hover:bg-white/10 p-3 rounded-none transition-all"
+              class="text-left text-xs bg-[var(--glass-input-bg)] border border-[var(--glass-input-border)] hover:border-[var(--primary)]/50 hover:bg-[var(--glass-bg)] p-3.5 rounded-none transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[var(--primary)]/5 cursor-pointer"
             >
-              <span class="text-blue-400 font-semibold block mb-0.5">测试数学/逻辑</span>
-              <span class="text-gray-400">"9.11和9.8哪个大？"</span>
+              <span class="text-[var(--primary)] font-semibold block mb-1">测试数学/逻辑</span>
+              <span class="text-muted-foreground">"9.11和9.8哪个大？"</span>
             </button>
             <button
               @click="setQuickInput('找出单词 strawberry 中有几个字母 r？')"
-              class="text-left text-xs bg-white/5 border border-white/5 hover:border-white/15 hover:bg-white/10 p-3 rounded-none transition-all"
+              class="text-left text-xs bg-[var(--glass-input-bg)] border border-[var(--glass-input-border)] hover:border-[var(--thinking)]/50 hover:bg-[var(--glass-bg)] p-3.5 rounded-none transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[var(--thinking)]/5 cursor-pointer"
             >
-              <span class="text-purple-400 font-semibold block mb-0.5">测试思维链细节</span>
-              <span class="text-gray-400">"strawberry 中有几个 r？"</span>
+              <span class="text-[var(--thinking)] font-semibold block mb-1">测试思维链细节</span>
+              <span class="text-muted-foreground">"strawberry 中有几个 r？"</span>
             </button>
           </div>
         </div>
@@ -209,7 +217,7 @@ onMounted(() => {
 /* 额外精细控制 */
 select {
   appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg fill='currentColor' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
   background-repeat: no-repeat;
   background-position: right 8px center;
   background-size: 16px;

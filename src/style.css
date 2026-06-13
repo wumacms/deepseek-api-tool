@@ -3,16 +3,42 @@
 @theme {
   --font-sans: 'Outfit', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* 将 CSS 变量映射为 Tailwind 颜色 token */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-thinking: var(--thinking);
+  --color-thinking-foreground: var(--thinking-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #080b11;
-  color: #f3f4f6;
+  background-color: var(--background);
+  color: var(--foreground);
   margin: 0;
   padding: 0;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* 优质发光渐变背景特效 */
@@ -24,29 +50,31 @@ body {
   bottom: 0;
   z-index: -1;
   overflow: hidden;
-  background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
-              radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%),
-              #080b11;
+  background: radial-gradient(circle at 10% 20%, var(--ambient-1) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, var(--ambient-2) 0%, transparent 40%),
+              var(--ambient-base);
+  transition: background 0.4s ease;
 }
 
 /* 玻璃拟态卡片 */
 .glass-panel {
-  background: rgba(17, 24, 39, 0.6);
+  background: var(--glass-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--glass-input-bg);
+  border: 1px solid var(--glass-input-border);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-input:focus {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+  background: var(--glass-input-bg);
+  border-color: var(--glass-input-focus-border);
+  box-shadow: 0 0 15px var(--glass-input-focus-shadow);
   outline: none;
 }
 
@@ -54,7 +82,7 @@ body {
 .typing-cursor::after {
   content: '▋';
   display: inline-block;
-  color: #3b82f6;
+  color: var(--primary);
   animation: blink 1s step-end infinite;
   margin-left: 2px;
 }
@@ -62,7 +90,7 @@ body {
 .thinking-cursor::after {
   content: '▋';
   display: inline-block;
-  color: #8b5cf6;
+  color: var(--thinking);
   animation: blink 1s step-end infinite;
   margin-left: 2px;
 }
@@ -81,11 +109,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--scrollbar-thumb);
   border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* ==================== Markdown 渲染样式定制 ==================== */
@@ -104,12 +132,12 @@ body {
 .markdown-content h5, 
 .markdown-content h6 {
   font-weight: 700;
-  color: #ffffff;
+  color: var(--foreground);
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
 }
-.markdown-content h1 { font-size: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.25rem; }
-.markdown-content h2 { font-size: 1.3rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.2rem; }
+.markdown-content h1 { font-size: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.25rem; }
+.markdown-content h2 { font-size: 1.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.2rem; }
 .markdown-content h3 { font-size: 1.15rem; }
 .markdown-content h4 { font-size: 1rem; }
 
@@ -128,28 +156,29 @@ body {
   line-height: 1.5;
 }
 .markdown-content blockquote {
-  border-left: 3px solid rgba(59, 130, 246, 0.5);
-  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid var(--glass-input-focus-border);
+  background: var(--glass-input-bg);
   padding: 0.5rem 1rem;
   margin: 0.75rem 0;
   border-radius: 0;
-  color: #9ca3af;
+  color: var(--muted-foreground);
 }
 .markdown-content code:not(.hljs) {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--glass-input-bg);
   padding: 0.15rem 0.35rem;
   border-radius: 0;
   font-family: var(--font-mono);
   font-size: 0.85em;
-  color: #f472b6; /* 靓丽粉红色高亮行内代码 */
+  color: var(--code-inline);
+  border: 1px solid var(--glass-input-border);
 }
 .markdown-content a {
-  color: #3b82f6;
+  color: var(--primary);
   text-decoration: underline;
   transition: color 0.2s;
 }
 .markdown-content a:hover {
-  color: #60a5fa;
+  color: var(--ring);
 }
 .markdown-content table {
   width: 100%;
@@ -159,21 +188,160 @@ body {
 }
 .markdown-content th, 
 .markdown-content td {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   padding: 0.6rem 0.8rem;
 }
 .markdown-content th {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-input-bg);
   font-weight: 600;
   text-align: left;
-  color: #ffffff;
+  color: var(--foreground);
 }
 .markdown-content tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.01);
+  background: var(--glass-input-bg);
 }
 .markdown-content hr {
   border: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--glass-border);
   margin: 1.5rem 0;
 }
 
+/* ==================== 代码块容器样式 ==================== */
+.code-block {
+  border: 1px solid var(--code-block-border);
+  background: var(--code-block-bg);
+}
+.code-block-header {
+  background: var(--code-block-header-bg);
+  color: var(--code-block-header-text);
+  border-bottom: 1px solid var(--code-block-border);
+}
+.code-block-header .copy-code-btn {
+  color: var(--code-block-header-text);
+}
+.code-block-header .copy-code-btn:hover {
+  color: var(--foreground);
+  background: var(--code-block-header-bg);
+}
+.code-block pre {
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: var(--code-block-text);
+}
+.code-block code.hljs {
+  background: transparent;
+  padding: 0;
+}
+
+/* ==================== Highlight.js 自适应语法高亮主题 ==================== */
+/* 基于 CSS 变量的自定义高亮色 — 同时适配深色与浅色模式 */
+
+.hljs {
+  color: var(--code-block-text);
+  background: transparent;
+}
+
+/* 注释 */
+.hljs-comment,
+.hljs-quote {
+  color: var(--hljs-comment);
+  font-style: italic;
+}
+
+/* 关键字、选择器 */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type {
+  color: var(--hljs-keyword);
+  font-weight: 600;
+}
+
+/* 字符串、正则 */
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: var(--hljs-string);
+}
+
+/* 数字、布尔值、字面量 */
+.hljs-number,
+.hljs-literal,
+.hljs-built_in,
+.hljs-builtin-name {
+  color: var(--hljs-number);
+}
+
+/* 函数名、标题 */
+.hljs-title,
+.hljs-section,
+.hljs-title.function_ {
+  color: var(--hljs-function);
+  font-weight: 600;
+}
+
+/* 变量、属性 */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attr {
+  color: var(--hljs-variable);
+}
+
+/* 标签名 */
+.hljs-tag,
+.hljs-name {
+  color: var(--hljs-tag);
+}
+
+/* 属性值 */
+.hljs-attribute {
+  color: var(--hljs-attribute);
+}
+
+/* 类名、类型名 */
+.hljs-class .hljs-title,
+.hljs-title.class_ {
+  color: var(--hljs-class);
+}
+
+/* 符号、bullet */
+.hljs-symbol,
+.hljs-bullet {
+  color: var(--hljs-symbol);
+}
+
+/* 元数据、文档标签 */
+.hljs-meta,
+.hljs-doctag {
+  color: var(--hljs-meta);
+}
+
+/* 删除行 */
+.hljs-deletion {
+  color: var(--destructive);
+}
+
+/* 强调 */
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 700;
+}
+
+/* 链接 */
+.hljs-link {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* 选择高亮 */
+.hljs::selection,
+.hljs ::selection {
+  background: var(--hljs-selection);
+}
+
+/* 代码行号 gutter（如有） */
+.hljs-ln-numbers {
+  color: var(--hljs-comment);
+  user-select: none;
+}

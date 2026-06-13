@@ -10,6 +10,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
   <title>DeepSeek Chat Sandbox</title>
+  <script>
+    // 防止 FOUC：在 DOM 解析前立即应用主题模式
+    (function() {
+      var mode = localStorage.getItem('deepseek_theme_mode') || 'dark';
+      if (mode === 'dark') document.documentElement.classList.add('dark');
+    })();
+  </script>
 </head>
 
 <body>

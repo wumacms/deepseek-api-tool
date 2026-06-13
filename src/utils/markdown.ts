@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/github-dark.css';
+
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import DOMPurify from 'dompurify';
@@ -39,12 +39,12 @@ renderer.code = function (codeOrObj: any, lang?: string) {
     console.error('Highlight error:', err);
   }
 
-  return `<div class="relative border border-white/10 rounded-none overflow-hidden bg-black/40 font-mono text-xs my-3">
-    <div class="bg-white/5 px-4 py-2 flex justify-between items-center text-[10px] text-gray-400 select-none">
+  return `<div class="code-block relative rounded-none overflow-hidden font-mono text-xs my-3">
+    <div class="code-block-header px-4 py-2 flex justify-between items-center text-[10px] select-none">
       <span>${codeLang.toUpperCase()}</span>
-      <button class="copy-code-btn hover:text-white transition-colors cursor-pointer px-2 py-0.5 rounded-none hover:bg-white/5">复制</button>
+      <button class="copy-code-btn transition-colors cursor-pointer px-2 py-0.5 rounded-none">复制</button>
     </div>
-    <pre class="overflow-x-auto text-blue-200/90"><code class="hljs language-${codeLang}">${highlighted}</code></pre>
+    <pre class="overflow-x-auto"><code class="hljs language-${codeLang}">${highlighted}</code></pre>
   </div>`;
 };
 

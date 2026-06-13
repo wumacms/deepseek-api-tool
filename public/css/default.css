@@ -1,0 +1,148 @@
+/*
+ * Default Theme — "DeepBlue" (蓝调)
+ * 经典蓝紫配色，与原始深色界面视觉风格高度一致
+ */
+
+:root {
+  --background: oklch(0.98 0.003 260);
+  --foreground: oklch(0.15 0.02 260);
+  --card: oklch(0.96 0.005 260);
+  --card-foreground: oklch(0.15 0.02 260);
+  --popover: oklch(0.99 0.002 260);
+  --popover-foreground: oklch(0.15 0.02 260);
+  --primary: oklch(0.55 0.22 264);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.94 0.01 260);
+  --secondary-foreground: oklch(0.25 0.02 260);
+  --muted: oklch(0.93 0.008 260);
+  --muted-foreground: oklch(0.50 0.02 260);
+  --accent: oklch(0.92 0.02 264);
+  --accent-foreground: oklch(0.25 0.02 260);
+  --destructive: oklch(0.55 0.22 27);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.90 0.01 260);
+  --input: oklch(0.92 0.008 260);
+  --ring: oklch(0.55 0.22 264);
+
+  --thinking: oklch(0.55 0.20 300);
+  --thinking-foreground: oklch(0.40 0.18 300);
+  --thinking-bg: oklch(0.55 0.20 300 / 0.06);
+  --thinking-border: oklch(0.55 0.20 300 / 0.25);
+  --code-inline: oklch(0.50 0.18 350);
+  --success: oklch(0.55 0.18 145);
+  --warning: oklch(0.65 0.18 65);
+
+  --glass-bg: oklch(0.99 0.002 260 / 0.7);
+  --glass-border: oklch(0.15 0.02 260 / 0.08);
+  --glass-input-bg: oklch(0.15 0.02 260 / 0.03);
+  --glass-input-border: oklch(0.15 0.02 260 / 0.10);
+  --glass-input-focus-border: oklch(0.55 0.22 264 / 0.5);
+  --glass-input-focus-shadow: oklch(0.55 0.22 264 / 0.12);
+
+  --ambient-1: oklch(0.55 0.22 264 / 0.06);
+  --ambient-2: oklch(0.55 0.20 300 / 0.06);
+  --ambient-base: oklch(0.98 0.003 260);
+
+  --user-bubble-bg: oklch(0.55 0.22 264 / 0.10);
+  --user-bubble-border: oklch(0.55 0.22 264 / 0.20);
+  --user-bubble-text: oklch(0.20 0.02 260);
+
+  --assistant-bg: oklch(0.15 0.02 260 / 0.03);
+  --assistant-border: oklch(0.15 0.02 260 / 0.08);
+  --assistant-text: oklch(0.30 0.02 260);
+
+  --header-bg: oklch(0.98 0.003 260 / 0.85);
+  --scrollbar-thumb: oklch(0.15 0.02 260 / 0.12);
+  --scrollbar-thumb-hover: oklch(0.15 0.02 260 / 0.22);
+
+  --code-block-bg: oklch(0.96 0.005 260);
+  --code-block-border: oklch(0.88 0.01 260);
+  --code-block-header-bg: oklch(0.93 0.008 260);
+  --code-block-header-text: oklch(0.45 0.02 260);
+  --code-block-text: oklch(0.25 0.02 260);
+
+  --hljs-comment: oklch(0.55 0.02 260);
+  --hljs-keyword: oklch(0.45 0.20 300);
+  --hljs-string: oklch(0.45 0.15 145);
+  --hljs-number: oklch(0.50 0.18 55);
+  --hljs-function: oklch(0.45 0.18 264);
+  --hljs-variable: oklch(0.40 0.15 30);
+  --hljs-tag: oklch(0.50 0.18 20);
+  --hljs-attribute: oklch(0.50 0.16 60);
+  --hljs-class: oklch(0.48 0.18 80);
+  --hljs-symbol: oklch(0.50 0.15 200);
+  --hljs-meta: oklch(0.50 0.10 260);
+  --hljs-selection: oklch(0.55 0.22 264 / 0.15);
+}
+
+.dark {
+  --background: oklch(0.13 0.02 260);
+  --foreground: oklch(0.95 0.005 260);
+  --card: oklch(0.18 0.02 260);
+  --card-foreground: oklch(0.95 0.005 260);
+  --popover: oklch(0.16 0.02 260);
+  --popover-foreground: oklch(0.95 0.005 260);
+  --primary: oklch(0.62 0.20 264);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.22 0.02 260);
+  --secondary-foreground: oklch(0.90 0.005 260);
+  --muted: oklch(0.20 0.015 260);
+  --muted-foreground: oklch(0.60 0.02 260);
+  --accent: oklch(0.22 0.03 264);
+  --accent-foreground: oklch(0.90 0.005 260);
+  --destructive: oklch(0.60 0.22 27);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.26 0.02 260);
+  --input: oklch(0.24 0.02 260);
+  --ring: oklch(0.62 0.20 264);
+
+  --thinking: oklch(0.65 0.18 300);
+  --thinking-foreground: oklch(0.72 0.16 300);
+  --thinking-bg: oklch(0.65 0.18 300 / 0.05);
+  --thinking-border: oklch(0.65 0.18 300 / 0.35);
+  --code-inline: oklch(0.72 0.16 350);
+  --success: oklch(0.60 0.18 145);
+  --warning: oklch(0.72 0.16 65);
+
+  --glass-bg: oklch(0.13 0.025 265 / 0.6);
+  --glass-border: oklch(0.99 0 0 / 0.08);
+  --glass-input-bg: oklch(0.99 0 0 / 0.03);
+  --glass-input-border: oklch(0.99 0 0 / 0.08);
+  --glass-input-focus-border: oklch(0.62 0.20 264 / 0.5);
+  --glass-input-focus-shadow: oklch(0.62 0.20 264 / 0.15);
+
+  --ambient-1: oklch(0.55 0.22 264 / 0.05);
+  --ambient-2: oklch(0.55 0.20 300 / 0.05);
+  --ambient-base: oklch(0.13 0.02 260);
+
+  --user-bubble-bg: oklch(0.55 0.22 264 / 0.15);
+  --user-bubble-border: oklch(0.55 0.22 264 / 0.25);
+  --user-bubble-text: oklch(0.90 0.005 260);
+
+  --assistant-bg: oklch(0.99 0 0 / 0.04);
+  --assistant-border: oklch(0.99 0 0 / 0.08);
+  --assistant-text: oklch(0.85 0.01 260);
+
+  --header-bg: oklch(0.13 0.02 260 / 0.85);
+  --scrollbar-thumb: oklch(0.99 0 0 / 0.10);
+  --scrollbar-thumb-hover: oklch(0.99 0 0 / 0.20);
+
+  --code-block-bg: oklch(0.10 0.02 265);
+  --code-block-border: oklch(0.24 0.02 260);
+  --code-block-header-bg: oklch(0.15 0.02 260);
+  --code-block-header-text: oklch(0.55 0.02 260);
+  --code-block-text: oklch(0.85 0.01 260);
+
+  --hljs-comment: oklch(0.50 0.02 260);
+  --hljs-keyword: oklch(0.72 0.16 300);
+  --hljs-string: oklch(0.70 0.14 145);
+  --hljs-number: oklch(0.75 0.15 55);
+  --hljs-function: oklch(0.72 0.16 264);
+  --hljs-variable: oklch(0.75 0.14 30);
+  --hljs-tag: oklch(0.72 0.16 20);
+  --hljs-attribute: oklch(0.72 0.14 60);
+  --hljs-class: oklch(0.72 0.16 80);
+  --hljs-symbol: oklch(0.70 0.13 200);
+  --hljs-meta: oklch(0.62 0.08 260);
+  --hljs-selection: oklch(0.62 0.20 264 / 0.20);
+}
